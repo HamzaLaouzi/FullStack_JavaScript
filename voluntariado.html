@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Voluntariados | Ruedas de Esperanza</title>
+        <link rel="stylesheet" href="assets/css/styles.css">
+    </head>
+    <body>
+        <header>
+            <h2>Voluntariado</h2>
+            <nav>
+                <a href="index.html">Dashboard</a>
+                <a href="login.html">Login</a>
+                <a href="voluntariado.html">Voluntariados</a>
+                <a href="registro.html">Alta Usuario</a>
+                <a href="#">-no login-</a>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h1>Publicar voluntariado</h1>
+                <form id="voluntariado-form">
+                    <label>
+                        Título
+                        <input type="text" id="vol-titulo" required>
+                    </label>
+                    <label>
+                        Fecha
+                        <input type="date" id="vol-fecha" required>
+                    </label>
+                    <label>
+                        Descripción
+                        <textarea id="vol-descripcion" rows="4" required></textarea>
+                    </label>
+                    <button type="submit">Publicar</button>
+                </form>
+            </section>
+        </main>
+        <footer>
+            <small>&copy; <span id="year"></span> Ruedas de Esperanza</small>
+        </footer>
+        <script src="assets/js/voluntariado.js"></script>
+    </body>
+</html>
+

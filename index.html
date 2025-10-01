@@ -7,6 +7,30 @@
         <link rel="stylesheet" href="assets/css/styles.css">
     </head>
     <body>
-
+        <header>
+            <h2>Voluntariado</h2>
+            <nav>
+                <a href="index.html">Dashboard</a>
+                <a href="login.html">Login</a>
+                <a href="voluntariado.html">Voluntariados</a>
+                <a href="registro.html">Alta Usuario</a>
+                <a href="#">-no login-</a>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h1>Dashboard de Voluntariado ruedas de esperanza</h1>
+                <div class="tabs">
+                    <button id="tab-otras" type="button">Otras</button>
+                    <button id="tab-propias" type="button">Propias</button>
+                </div>
+                <div id="cards-container" class="cards"></div>
+            </section>
+        </main>
+        <footer>
+            <small>&copy; <span id="year"></span> Ruedas de Esperanza</small>
+        </footer>
+        <script src="assets/js/datos.js"></script>
+        <script src="assets/js/index.js"></script>
     </body>
 </html>

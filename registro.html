@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Alta Usuario | Ruedas de Esperanza</title>
+        <link rel="stylesheet" href="assets/css/styles.css">
+    </head>
+    <body>
+        <header>
+            <h2>Voluntariado</h2>
+            <nav>
+                <a href="index.html">Dashboard</a>
+                <a href="login.html">Login</a>
+                <a href="voluntariado.html">Voluntariados</a>
+                <a href="registro.html">Alta Usuario</a>
+                <a href="#">-no login-</a>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h1>Alta de usuario</h1>
+                <form id="registro-form">
+                    <label>
+                        Nombre
+                        <input type="text" id="reg-nombre" required>
+                    </label>
+                    <label>
+                        Email
+                        <input type="email" id="reg-email" required>
+                    </label>
+                    <label>
+                        Contraseña
+                        <input type="password" id="reg-password" minlength="6" required>
+                    </label>
+                    <button type="submit">Crear cuenta</button>
+                </form>
+            </section>
+        </main>
+        <footer>
+            <small>&copy; <span id="year"></span> Ruedas de Esperanza</small>
+        </footer>
+        <script src="assets/js/registro.js"></script>
+    </body>
+</html>
+
