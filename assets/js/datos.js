@@ -1,9 +1,6 @@
 (function datosModule() {
-    const KEY_USERS = 're_users';
-    const KEY_CURRENT = 're_current_user';
-    const KEY_VOLUNT = 're_voluntariados';
-    const KEY_DATA_VERSION = 're_data_version';
-    const CURRENT_DATA_VERSION = '2';
+    // Modo sin persistencia para datos, pero sesión del usuario en sessionStorage
+    const SESSION_CURRENT_KEY = 're_session_current_user';
 
     function safeParse(raw, fallback) {
         try {
@@ -16,13 +13,12 @@
 
     // Users
     function readUsers() {
-        const raw = localStorage.getItem(KEY_USERS);
-        const list = safeParse(raw, []);
-        return Array.isArray(list) ? list : [];
+        // Sin persistencia: siempre partir de los datos por defecto
+        return defaultUsers();
     }
 
     function writeUsers(users) {
-        localStorage.setItem(KEY_USERS, JSON.stringify(users || []));
+        // No-op en modo sin persistencia
     }
 
     function defaultUsers() {
@@ -33,20 +29,25 @@
     }
 
     function seedUsersIfEmpty() {
-        const current = readUsers();
-        if (current.length === 0) {
-            writeUsers(defaultUsers());
-        }
+        // No-op en modo sin persistencia (los reads devuelven defaults)
     }
 
     function setCurrentUser(email) {
-        if (email) localStorage.setItem(KEY_CURRENT, email);
-        else localStorage.removeItem(KEY_CURRENT);
+        const value = email || '';
+        if (value) {
+            try { sessionStorage.setItem(SESSION_CURRENT_KEY, value); } catch {}
+        } else {
+            try { sessionStorage.removeItem(SESSION_CURRENT_KEY); } catch {}
+        }
         updateNavbarUser();
     }
 
     function getCurrentUser() {
-        return localStorage.getItem(KEY_CURRENT) || '';
+        try {
+            return sessionStorage.getItem(SESSION_CURRENT_KEY) || '';
+        } catch {
+            return '';
+        }
     }
 
     function updateNavbarUser() {
@@ -89,13 +90,12 @@
 
     // Voluntariados
     function readVoluntariados() {
-        const raw = localStorage.getItem(KEY_VOLUNT);
-        const list = safeParse(raw, []);
-        return Array.isArray(list) ? list : [];
+        // Sin persistencia: siempre partir de los datos por defecto
+        return defaultVoluntariados();
     }
 
     function writeVoluntariados(items) {
-        localStorage.setItem(KEY_VOLUNT, JSON.stringify(items || []));
+        // No-op en modo sin persistencia
     }
 
     function defaultVoluntariados() {
@@ -107,25 +107,15 @@
     }
 
     function seedVoluntariadosIfEmpty() {
-        const current = readVoluntariados();
-        if (current.length === 0) {
-            writeVoluntariados(defaultVoluntariados());
-        }
+        // No-op en modo sin persistencia (los reads devuelven defaults)
     }
 
     function migrateIfNeeded() {
-        const storedVersion = localStorage.getItem(KEY_DATA_VERSION) || '';
-        if (storedVersion !== CURRENT_DATA_VERSION) {
-            writeUsers(defaultUsers());
-            writeVoluntariados(defaultVoluntariados());
-            localStorage.setItem(KEY_DATA_VERSION, CURRENT_DATA_VERSION);
-        }
+        // No-op en modo sin persistencia
     }
 
     function seedAllIfEmpty() {
-        migrateIfNeeded();
-        seedUsersIfEmpty();
-        seedVoluntariadosIfEmpty();
+        // No-op en modo sin persistencia
     }
 
     window.DATOS = {

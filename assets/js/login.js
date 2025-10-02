@@ -5,6 +5,12 @@
         yearEl.textContent = new Date().getFullYear();
     }
 
+    // Refrescar estado de sesión en la navbar
+    if (window.DATOS) {
+        DATOS.updateNavbarUser();
+        DATOS.attachNavbarHandlers();
+    }
+
     const form = document.getElementById('login-form');
     if (form) {
         form.addEventListener('submit', function (ev) {

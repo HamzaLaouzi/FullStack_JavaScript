@@ -3,6 +3,12 @@
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+    // Refrescar estado de sesión en la navbar
+    if (window.DATOS) {
+        DATOS.updateNavbarUser();
+        DATOS.attachNavbarHandlers();
+    }
+
     const list = (window.DATOS && DATOS.readVoluntariados()) || [];
 
 	// Pre-rellenar el usuario con el email de sesión y bloquear edición

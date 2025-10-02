@@ -3,6 +3,12 @@
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+    // Refrescar estado de sesión en la navbar
+    if (window.DATOS) {
+        DATOS.updateNavbarUser();
+        DATOS.attachNavbarHandlers();
+    }
+
     // Datos de ejemplo para visualizar
     const users = (window.DATOS && DATOS.readUsers()) || [];
 

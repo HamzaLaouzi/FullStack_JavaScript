@@ -5,6 +5,12 @@
         yearEl.textContent = new Date().getFullYear();
     }
 
+    // Refrescar estado de sesión en la navbar
+    if (window.DATOS) {
+        DATOS.updateNavbarUser();
+        DATOS.attachNavbarHandlers();
+    }
+
     // Render desde datos.js (voluntariados almacenados)
     const container = document.getElementById('cards-container');
     const template = document.getElementById('card-template');
