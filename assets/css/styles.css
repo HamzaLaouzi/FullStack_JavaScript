@@ -4,6 +4,10 @@ body {
     background-color: #f8fafc;
 }
 
+.navbar.navbar-light.bg-light {
+    background-color: #cfd4da !important;
+}
+
 .title-marker {
     font-family: 'Permanent Marker', cursive;
 }

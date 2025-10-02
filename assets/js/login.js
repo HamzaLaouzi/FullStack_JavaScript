@@ -23,7 +23,7 @@
                     // Redirige al dashboard para reflejar el estado en la navbar
                     window.location.href = 'index.html';
                 } else {
-                    alert('Credenciales incorrectas');
+                    alert('Correo o contraseña incorrectos');
                 }
             }
             form.classList.add('was-validated');
