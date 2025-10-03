@@ -1,65 +1,52 @@
-// Maquetación funcional de Gestión de Usuarios
-(function initUsers() {
-    const yearEl = document.getElementById('year');
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
+/**
+* lógica del fichero registro.html 
+*/
 
-    // Refrescar estado de sesión en la navbar
-    if (window.DATOS) {
-        DATOS.updateNavbarUser();
-        DATOS.attachNavbarHandlers();
+const table = document.getElementById("users-table")
+const form = document.getElementById("registro-form")
+
+function addRow(nombre, email, password, index) {
+    let newRow = table.tBodies[0].insertRow()
+
+    let cell1 = newRow.insertCell(0)
+    let cell2 = newRow.insertCell(1)
+    let cell3 = newRow.insertCell(2)
+    let cell4 = newRow.insertCell(3)
+
+    cell1.textContent = nombre
+    cell2.textContent = email
+    cell3.textContent = password
+    cell4.innerHTML = `<button type="button" class="btn btn-danger delete-button">Eliminar</button>`
+
+    let deleteButton = newRow.querySelector(".delete-button")
+    deleteButton.addEventListener("click", function () {
+        usuarios.splice(index, 1)
+        newRow.remove()
+    })
+}
+
+for (let index = 0; index < window.usuarios.length; index++) {
+    let user = window.usuarios[index]
+    addRow(user.nombre, user.email, user.password, index)
+}
+
+function addNewUser(event) {
+    event.preventDefault()
+
+    let userName = document.getElementById("reg-nombre").value  
+    let userEmail = document.getElementById("reg-email").value
+    let userPassword = document.getElementById("reg-password").value
+
+    if (userName && userEmail && userPassword) {
+        window.usuarios.push({ nombre: userName, email: userEmail, password: userPassword })
+
+        addRow(userName, userEmail, userPassword, window.usuarios.length - 1)
+        alert("Nuevo usuario registrado correctamente")
+        form.reset()
+    } else {
+        alert("Faltan datos para añadir registro")
     }
+}
 
-    // Datos de ejemplo para visualizar
-    const users = (window.DATOS && DATOS.readUsers()) || [];
-
-    const tbody = document.querySelector('#users-table tbody');
-    function render() {
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        users.forEach((u, idx) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${u.nombre}</td>
-                <td>${u.email}</td>
-                <td>${u.password}</td>
-                <td><button data-idx="${idx}" class="btn btn-sm btn-danger btn-del">Borrar</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-    render();
-
-    if (tbody) {
-        tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('.btn-del');
-            if (btn) {
-                const idx = Number(btn.getAttribute('data-idx'));
-                users.splice(idx, 1);
-                DATOS.writeUsers(users);
-                render();
-            }
-        });
-    }
-
-    const form = document.getElementById('registro-form');
-    if (form) {
-        form.addEventListener('submit', function (ev) {
-            ev.preventDefault();
-            if (!form.checkValidity()) {
-                ev.stopPropagation();
-            } else {
-                const nombre = document.getElementById('reg-nombre').value.trim();
-                const email = document.getElementById('reg-email').value.trim();
-                const password = document.getElementById('reg-password').value.trim();
-                users.push({ nombre, email, password });
-                DATOS.writeUsers(users);
-                render();
-                form.reset();
-                form.classList.remove('was-validated');
-            }
-            form.classList.add('was-validated');
-        });
-    }
-})();
-
+form.addEventListener("submit", addNewUser)
 

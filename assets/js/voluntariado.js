@@ -1,87 +1,62 @@
-// Lógica básica para maqueta de gestión de voluntariados
-(function initVoluntariado() {
-    const yearEl = document.getElementById('year');
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
+/**
+* lógica del fichero voluntariado.html
+*/
 
-    // Refrescar estado de sesión en la navbar
-    if (window.DATOS) {
-        DATOS.updateNavbarUser();
-        DATOS.attachNavbarHandlers();
+const table = document.getElementById("vol-table")
+const form = document.getElementById("voluntariado-form")
+
+function addRow(title, usuario, date, description, volunType, index) {
+    let newRow = table.tBodies[0].insertRow()
+    let delButton = `<button type=\"button\" class=\"btn btn-danger delete-button\">Eliminar</button>`
+    let cellClass = (volunType === "Oferta") ? "table-primary" : "table-success"
+
+    let cell1 = newRow.insertCell(0)
+    let cell2 = newRow.insertCell(1)
+    let cell3 = newRow.insertCell(2)
+    let cell4 = newRow.insertCell(3)
+    let cell5 = newRow.insertCell(4)
+    let cell6 = newRow.insertCell(5)
+
+    cell1.textContent = title
+    cell2.textContent = usuario
+    cell3.textContent = date
+    cell4.textContent = description
+    cell5.textContent = volunType
+    cell6.innerHTML = delButton
+
+    newRow.classList.add(cellClass)
+
+    let deleteButton = newRow.querySelector('.delete-button')
+    deleteButton.addEventListener('click', function () {
+        window.anuncios.splice(index, 1)
+        newRow.remove()
+    })
+}
+
+for (let index = 0; index < window.anuncios.length; index++) {
+    let card = window.anuncios[index]
+    addRow(card.title, card.autor, card.date, card.description, card.volunType, index)
+}
+
+function addNewCard(event) {
+    event.preventDefault()
+
+    let title = document.getElementById('vol-titulo').value
+    let usuario = document.getElementById('vol-usuario').value
+    let volunDate = document.getElementById('vol-fecha').value
+    let description = document.getElementById('vol-descripcion').value
+    let volunTypeValue = document.getElementById('vol-tipo').value // 'peticion' | 'oferta'
+
+    let volunType = (volunTypeValue === 'oferta') ? 'Oferta' : 'Petición'
+
+    if (title && usuario && volunDate && description && volunType) {
+        window.anuncios.push({ date: volunDate, title, description, autor: usuario, volunType })
+        addRow(title, usuario, volunDate, description, volunType, window.anuncios.length - 1)
+        alert("Nuevo voluntariado registrado correctamente")
+        form.reset()
+    } else {
+        alert("Faltan datos para añadir registro")
     }
+}
 
-    const list = (window.DATOS && DATOS.readVoluntariados()) || [];
-
-	// Pre-rellenar el usuario con el email de sesión y bloquear edición
-	const usuarioInput = document.getElementById('vol-usuario');
-	if (usuarioInput && window.DATOS) {
-		const currentEmail = DATOS.getCurrentUser();
-		usuarioInput.value = currentEmail || '';
-		usuarioInput.readOnly = true;
-		if (!currentEmail) {
-			usuarioInput.placeholder = 'Inicia sesión para publicar';
-		}
-	}
-
-    const tbody = document.querySelector('#vol-table tbody');
-    function render() {
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        list.forEach((it, idx) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${it.titulo}</td>
-                <td>${it.usuario}</td>
-                <td>${it.fecha}</td>
-                <td style="max-width: 280px;">${it.desc}</td>
-                <td>${it.tipo}</td>
-                <td><button data-idx="${idx}" class="btn btn-sm btn-danger btn-del">Borrar</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-    render();
-
-    const form = document.getElementById('voluntariado-form');
-    if (form) {
-        form.addEventListener('submit', function (ev) {
-            ev.preventDefault();
-            if (!form.checkValidity()) {
-                ev.stopPropagation();
-			} else {
-				const titulo = document.getElementById('vol-titulo').value.trim();
-				const currentEmail = (window.DATOS && DATOS.getCurrentUser && DATOS.getCurrentUser()) || '';
-				if (!currentEmail) {
-					alert('Debes iniciar sesión para dar de alta un voluntariado.');
-					return;
-				}
-                const fecha = document.getElementById('vol-fecha').value.trim();
-                const desc = document.getElementById('vol-descripcion').value.trim();
-                const tipo = document.getElementById('vol-tipo').value;
-				list.push({ titulo, usuario: currentEmail, fecha, desc, tipo });
-                DATOS.writeVoluntariados(list);
-                render();
-                form.reset();
-                form.classList.remove('was-validated');
-				// Rellenar de nuevo el usuario bloqueado tras reset
-				if (usuarioInput) {
-					usuarioInput.value = currentEmail;
-				}
-            }
-            form.classList.add('was-validated');
-        });
-    }
-
-    if (tbody) {
-        tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('.btn-del');
-            if (btn) {
-                const idx = Number(btn.getAttribute('data-idx'));
-                list.splice(idx, 1);
-                DATOS.writeVoluntariados(list);
-                render();
-            }
-        });
-    }
-})();
-
-
+form.addEventListener('submit', addNewCard)

@@ -1,40 +1,23 @@
-// Inicialización de la vista de Login
-(function initLogin() {
-    const yearEl = document.getElementById('year');
-    if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
+/**
+* lógica del fichero login.html
+*/
+
+const form = document.getElementById('login-form')
+const emailInput = document.getElementById('login-email')
+const passwordInput = document.getElementById('login-password')
+
+function handleLogin(event) {
+    event.preventDefault()
+
+    const emailValue = emailInput.value
+    const passwordValue = passwordInput.value
+
+    const user = window.usuarios.find(u => u.email === emailValue && u.password === passwordValue)
+    if (user) {
+        alert(`Se ha iniciado sesión correctamente. Bienvenid@ ${user.nombre}`)
+    } else {
+        alert("Dirección de correo o contraseña incorrectos")
     }
+}
 
-    // Refrescar estado de sesión en la navbar
-    if (window.DATOS) {
-        DATOS.updateNavbarUser();
-        DATOS.attachNavbarHandlers();
-    }
-
-    const form = document.getElementById('login-form');
-    if (form) {
-        form.addEventListener('submit', function (ev) {
-            ev.preventDefault();
-            // Validación de Bootstrap
-            if (!form.checkValidity()) {
-                ev.stopPropagation();
-            } else {
-                const email = document.getElementById('login-email').value.trim();
-                const password = document.getElementById('login-password').value.trim();
-                const users = (window.DATOS && DATOS.readUsers()) || [];
-                const match = users.find(u => u.email === email && u.password === password);
-                if (match) {
-                    DATOS.setCurrentUser(email);
-                    alert('Inicio de sesión exitoso');
-                    // Redirige al dashboard para reflejar el estado en la navbar
-                    window.location.href = 'index.html';
-                } else {
-                    alert('Correo o contraseña incorrectos');
-                }
-            }
-            form.classList.add('was-validated');
-        });
-    }
-})();
-
-
+form.addEventListener('submit', handleLogin)
