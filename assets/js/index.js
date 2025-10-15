@@ -5,6 +5,38 @@
 const container = document.getElementById('cards-container')
 const template = document.getElementById('card-template')
 
+// Verificar si hay un usuario logueado
+function updateLoginStatus() {
+    const currentUser = localStorage.getItem('currentUser')
+    const navUser = document.getElementById('nav-user')
+    const loginLink = document.querySelector('a[href="login.html"]')
+    
+    if (currentUser) {
+        const user = JSON.parse(currentUser)
+        if (navUser) {
+            navUser.textContent = user.email
+        }
+        if (loginLink) {
+            loginLink.textContent = 'Logout'
+            loginLink.href = '#'
+            loginLink.onclick = function(e) {
+                e.preventDefault()
+                localStorage.removeItem('currentUser')
+                window.location.reload()
+            }
+        }
+    } else {
+        if (navUser) {
+            navUser.textContent = '-no login-'
+        }
+        if (loginLink) {
+            loginLink.textContent = 'Login'
+            loginLink.href = 'login.html'
+            loginLink.onclick = null
+        }
+    }
+}
+
 function renderCards() {
 	container.innerHTML = ''
 	window.anuncios.forEach(item => {
@@ -36,5 +68,11 @@ function setYear() {
 	if (yearEl) yearEl.textContent = String(new Date().getFullYear())
 }
 
-setYear()
-renderCards()
+// Inicializar la página
+document.addEventListener('DOMContentLoaded', () => {
+    updateLoginStatus()
+    setYear()
+    if (window.anuncios) {
+        renderCards()
+    }
+})

@@ -1,52 +1,104 @@
-/**
-* lógica del fichero registro.html 
-*/
+// Los usuarios están disponibles globalmente desde datos.js
+/* GESTIÓN DE USUARIOS --------------------------------------------------------------------------------*/
 
-const table = document.getElementById("users-table")
-const form = document.getElementById("registro-form")
-
-function addRow(nombre, email, password, index) {
-    let newRow = table.tBodies[0].insertRow()
-
-    let cell1 = newRow.insertCell(0)
-    let cell2 = newRow.insertCell(1)
-    let cell3 = newRow.insertCell(2)
-    let cell4 = newRow.insertCell(3)
-
-    cell1.textContent = nombre
-    cell2.textContent = email
-    cell3.textContent = password
-    cell4.innerHTML = `<button type="button" class="btn btn-danger delete-button">Eliminar</button>`
-
-    let deleteButton = newRow.querySelector(".delete-button")
-    deleteButton.addEventListener("click", function () {
-        usuarios.splice(index, 1)
-        newRow.remove()
-    })
-}
-
-for (let index = 0; index < window.usuarios.length; index++) {
-    let user = window.usuarios[index]
-    addRow(user.nombre, user.email, user.password, index)
-}
-
-function addNewUser(event) {
-    event.preventDefault()
-
-    let userName = document.getElementById("reg-nombre").value  
-    let userEmail = document.getElementById("reg-email").value
-    let userPassword = document.getElementById("reg-password").value
-
-    if (userName && userEmail && userPassword) {
-        window.usuarios.push({ nombre: userName, email: userEmail, password: userPassword })
-
-        addRow(userName, userEmail, userPassword, window.usuarios.length - 1)
-        alert("Nuevo usuario registrado correctamente")
-        form.reset()
+// Función para actualizar el estado de login en la interfaz
+function updateLoginStatus() {
+    const currentUser = localStorage.getItem('currentUser');
+    const navUser = document.getElementById('nav-user');
+    const loginLink = document.querySelector('a[href="login.html"]');
+    
+    if (currentUser) {
+        const user = JSON.parse(currentUser);
+        if (navUser) {
+            navUser.textContent = user.email;
+        }
+        if (loginLink) {
+            loginLink.textContent = 'Logout';
+            loginLink.href = '#';
+            loginLink.onclick = function(e) {
+                e.preventDefault();
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        }
     } else {
-        alert("Faltan datos para añadir registro")
+        if (navUser) {
+            navUser.textContent = '-no login-';
+        }
+        if (loginLink) {
+            loginLink.textContent = 'Login';
+            loginLink.href = 'login.html';
+            loginLink.onclick = null;
+        }
     }
 }
 
-form.addEventListener("submit", addNewUser)
+function mostrarUsuarios() { /* Mostrar los usuarios creados ----------------------------*/
+    const container = document.getElementById('lista-usuarios');
+    container.innerHTML = '';
 
+    window.usuarios.forEach((usuario, index) => {
+      const fila = document.createElement('tr');
+      fila.className = 'align-middle';
+      fila.innerHTML = `
+        <td class="align-middle">${usuario.nombre}</td>
+        <td class="align-middle">${usuario.email}</td>
+        <td class="align-middle">${usuario.password}</td>
+        <td class="text-center align-middle">
+          <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${index})" title="Eliminar usuario">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      `;
+      container.appendChild(fila);
+    });
+}
+window.eliminarUsuario = function(indice) { /* Eliminar usuarios ---------------------------------*/
+    // Verificar si el usuario está logueado
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        alert('Debes iniciar sesión para eliminar usuarios');
+        return;
+    }
+    // Verificar si el usuario es el mismo que se intenta eliminar
+    window.usuarios.splice(indice, 1);
+    mostrarUsuarios();
+}
+
+/* EVENTOS -------------------------------------------------------------------------------------------*/
+document.querySelector('#usuarios form').addEventListener('submit', (e) => { /* Alta -----*/
+  e.preventDefault();
+  
+  const nombre = document.getElementById('alta-usr-name').value.trim();
+  const email = document.getElementById('alta-usr-email').value.trim();
+  const password = document.getElementById('alta-usr-pswrd').value;
+
+  // Validaciones
+  if (!nombre || !email || !password) {
+    alert('Todos los campos son obligatorios');
+    return;
+  }
+
+
+  // Verificar si el email ya existe
+  if (window.usuarios.some(u => u.email === email)) {
+    alert('Ya existe un usuario con ese email');
+    return;
+  }
+  
+  const nuevoUsuario = {
+    nombre,
+    email,
+    password 
+  };
+  
+  window.usuarios.push(nuevoUsuario);
+  mostrarUsuarios();
+  e.target.reset();
+  alert('Usuario creado correctamente.');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateLoginStatus();
+    mostrarUsuarios();
+});
